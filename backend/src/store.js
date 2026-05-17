@@ -77,7 +77,7 @@ export const findCarImageById = async (id) => {
 };
 
 export const findCarsByIds = async (ids) => {
-  if (isMongoEnabled()) return Car.find({ _id: { $in: ids } }).lean();
+  if (isMongoEnabled()) return Car.find({ _id: { $in: ids } }).select('-imageData -imageType').lean();
   return inMemoryDb.cars.filter((car) => ids.includes(car._id));
 };
 

@@ -23,18 +23,18 @@ router.get('/:id/image', async (req, res, next) => {
   try {
     const carImage = await findCarImageById(req.params.id);
     if (!carImage) {
-      return res.status(404).json({ message: 'Car image not found' });
+      return res.status(404).json({ message: 'Car not found' });
     }
 
     if (!isMongoEnabled()) {
       if (!carImage.imageUrl) {
-        return res.status(404).json({ message: 'Car image not found' });
+        return res.status(404).json({ message: 'Image URL not available' });
       }
       return res.redirect(carImage.imageUrl);
     }
 
     if (!carImage.imageData) {
-      return res.status(404).json({ message: 'Car image not found' });
+      return res.status(404).json({ message: 'Image data not available' });
     }
 
     res.set('Content-Type', carImage.imageType || 'application/octet-stream');
