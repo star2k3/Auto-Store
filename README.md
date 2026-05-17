@@ -11,7 +11,7 @@ Mini MERN-style 3D car e-commerce project with:
 ### 1) Backend
 
 ```bash
-cd /home/runner/work/Auto-Store/Auto-Store/backend
+cd backend
 npm install
 npm start
 ```
@@ -21,7 +21,7 @@ API runs at `http://localhost:4000`.
 ### 2) Frontend
 
 ```bash
-cd /home/runner/work/Auto-Store/Auto-Store/frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -31,6 +31,6 @@ Frontend runs at `http://localhost:5173`.
 ## Tests
 
 ```bash
-cd /home/runner/work/Auto-Store/Auto-Store
+cd .
 npm test
 ```
