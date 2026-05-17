@@ -10,7 +10,7 @@ const carSchema = new mongoose.Schema(
     pricePkr: { type: Number, required: true, min: 1, index: true },
     year: { type: Number, required: true },
     stock: { type: Number, required: true, min: 0 },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
     imageData: { type: Buffer, required: true },
     imageType: { type: String, required: true },
     summary: { type: String, required: true },
