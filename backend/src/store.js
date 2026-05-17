@@ -71,7 +71,7 @@ export const findCarById = async (id) => {
 };
 
 export const findCarImageById = async (id) => {
-  if (isMongoEnabled()) return Car.findById(id).select('imageData imageType').lean();
+  if (isMongoEnabled()) return Car.findById(id).select('+imageData +imageType').lean();
   const car = inMemoryDb.cars.find((entry) => entry._id === id);
   return car ? { imageUrl: car.imageUrl } : null;
 };

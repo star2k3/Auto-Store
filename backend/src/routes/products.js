@@ -4,14 +4,14 @@ import { findCarById, findCarImageById, listCars } from '../store.js';
 
 const router = Router();
 
-const buildImageUrl = (req, id) => `${req.protocol}://${req.get('host')}/api/products/${id}/image`;
+const buildImageUrl = (id) => `/api/products/${id}/image`;
 
 router.get('/', async (req, res, next) => {
   try {
     const cars = await listCars(req.query);
     const items = cars.map((car) => ({
       ...car,
-      imageUrl: isMongoEnabled() ? buildImageUrl(req, car._id) : car.imageUrl
+      imageUrl: isMongoEnabled() ? buildImageUrl(car._id) : car.imageUrl
     }));
     res.json({ items, total: items.length });
   } catch (error) {
@@ -53,7 +53,7 @@ router.get('/:id', async (req, res, next) => {
 
     return res.json({
       ...car,
-      imageUrl: isMongoEnabled() ? buildImageUrl(req, car._id) : car.imageUrl
+      imageUrl: isMongoEnabled() ? buildImageUrl(car._id) : car.imageUrl
     });
   } catch (error) {
     next(error);
