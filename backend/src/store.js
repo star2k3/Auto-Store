@@ -1,6 +1,7 @@
 import { Car } from './models/Car.js';
 import { Order } from './models/Order.js';
 import { carsSeed } from './data/carsSeed.js';
+import { placeholderImage } from './data/placeholderImage.js';
 import { inMemoryDb, isMongoEnabled } from './db.js';
 
 const buildFilter = ({ search = '', company = '', category = '', minPrice, maxPrice }) => {
@@ -32,14 +33,22 @@ const buildFilter = ({ search = '', company = '', category = '', minPrice, maxPr
 export const seedMongoCars = async () => {
   if (!isMongoEnabled()) return;
   const count = await Car.countDocuments();
-  if (count === 0) await Car.insertMany(carsSeed);
+  if (count === 0) {
+    const seedWithImages = carsSeed.map((car) => ({
+      ...car,
+      imageUrl: '',
+      imageData: placeholderImage.data,
+      imageType: placeholderImage.contentType
+    }));
+    await Car.insertMany(seedWithImages);
+  }
 };
 
 export const listCars = async (query) => {
   const filter = buildFilter(query);
 
   if (isMongoEnabled()) {
-    const cars = await Car.find(filter).sort({ pricePkr: 1 }).lean();
+    const cars = await Car.find(filter).select('-imageData -imageType').sort({ pricePkr: 1 }).lean();
     return cars;
   }
 
@@ -57,8 +66,14 @@ export const listCars = async (query) => {
 };
 
 export const findCarById = async (id) => {
-  if (isMongoEnabled()) return Car.findById(id).lean();
+  if (isMongoEnabled()) return Car.findById(id).select('-imageData -imageType').lean();
   return inMemoryDb.cars.find((car) => car._id === id) ?? null;
+};
+
+export const findCarImageById = async (id) => {
+  if (isMongoEnabled()) return Car.findById(id).select('imageData imageType').lean();
+  const car = inMemoryDb.cars.find((entry) => entry._id === id);
+  return car ? { imageUrl: car.imageUrl } : null;
 };
 
 export const findCarsByIds = async (ids) => {

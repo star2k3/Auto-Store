@@ -11,6 +11,8 @@ const carSchema = new mongoose.Schema(
     year: { type: Number, required: true },
     stock: { type: Number, required: true, min: 0 },
     imageUrl: { type: String, required: true },
+    imageData: { type: Buffer, required: true },
+    imageType: { type: String, required: true },
     summary: { type: String, required: true },
     fuelType: { type: String, required: true },
     transmission: { type: String, required: true },
