@@ -38,6 +38,11 @@ const ensureValidObjectId = (value) => {
   }
 };
 
+const toObjectId = (value) => {
+  ensureValidObjectId(value);
+  return new mongoose.Types.ObjectId(value);
+};
+
 export const seedMongoCars = async () => {
   if (!isMongoEnabled()) return;
   const count = await Car.countDocuments();
@@ -81,16 +86,16 @@ export const listCars = async (query) => {
 
 export const findCarById = async (id) => {
   if (isMongoEnabled()) {
-    ensureValidObjectId(id);
-    return Car.findById(id).lean();
+    const objectId = toObjectId(id);
+    return Car.findById(objectId).lean();
   }
   return inMemoryDb.cars.find((car) => car._id === id) ?? null;
 };
 
 export const findCarsByIds = async (ids) => {
   if (isMongoEnabled()) {
-    ids.forEach((id) => ensureValidObjectId(id));
-    return Car.find({ _id: { $in: ids } }).lean();
+    const objectIds = ids.map((id) => toObjectId(id));
+    return Car.find({ _id: { $in: objectIds } }).lean();
   }
   return inMemoryDb.cars.filter((car) => ids.includes(car._id));
 };
@@ -134,8 +139,8 @@ export const updateCar = async (id, payload) => {
   const normalized = normalizeCarPayload(payload);
 
   if (isMongoEnabled()) {
-    ensureValidObjectId(id);
-    const car = await Car.findByIdAndUpdate(id, normalized, { new: true, runValidators: true }).lean();
+    const objectId = toObjectId(id);
+    const car = await Car.findByIdAndUpdate(objectId, normalized, { new: true, runValidators: true }).lean();
     return car;
   }
 
@@ -147,8 +152,8 @@ export const updateCar = async (id, payload) => {
 
 export const deleteCar = async (id) => {
   if (isMongoEnabled()) {
-    ensureValidObjectId(id);
-    const result = await Car.deleteOne({ _id: id });
+    const objectId = toObjectId(id);
+    const result = await Car.deleteOne({ _id: objectId });
     return result.deletedCount > 0;
   }
 

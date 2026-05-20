@@ -90,7 +90,7 @@ router.put('/:id', adminLimiter, requireAuth, requireAdmin, async (req, res, nex
     if (errorMessage) return res.status(400).json({ message: errorMessage });
 
     const updated = await updateCar(req.params.id, { ...req.body, colors: parseColors(req.body?.colors) });
-    if (!updated) return res.status(404).json({ message: 'Car not found' });
+    if (!updated) return res.status(404).json({ message: 'Car not found.' });
     return res.json(updated);
   } catch (error) {
     return next(error);
@@ -100,7 +100,7 @@ router.put('/:id', adminLimiter, requireAuth, requireAdmin, async (req, res, nex
 router.delete('/:id', adminLimiter, requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const removed = await deleteCar(req.params.id);
-    if (!removed) return res.status(404).json({ message: 'Car not found' });
+    if (!removed) return res.status(404).json({ message: 'Car not found.' });
     return res.status(204).send();
   } catch (error) {
     return next(error);

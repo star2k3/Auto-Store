@@ -1,7 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { findUserById } from '../store.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
+const FALLBACK_SECRET = 'dev-secret-change-me';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET must be set in production.');
+}
+
+if (!JWT_SECRET) {
+  console.warn('JWT_SECRET is not set. Using a development-only fallback secret.');
+}
 
 const extractToken = (req) => {
   const header = req.headers.authorization || '';
@@ -9,15 +18,17 @@ const extractToken = (req) => {
   return header.slice(7);
 };
 
+const resolvedSecret = JWT_SECRET || FALLBACK_SECRET;
+
 export const signToken = (user) =>
-  jwt.sign({ sub: String(user._id), role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+  jwt.sign({ sub: String(user._id), role: user.role }, resolvedSecret, { expiresIn: '7d' });
 
 export const requireAuth = async (req, res, next) => {
   try {
     const token = extractToken(req);
     if (!token) return res.status(401).json({ message: 'Authentication required.' });
 
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, resolvedSecret);
     const user = await findUserById(payload.sub);
     if (!user) return res.status(401).json({ message: 'User not found.' });
 
@@ -33,7 +44,7 @@ export const optionalAuth = async (req, res, next) => {
   if (!token) return next();
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, resolvedSecret);
     const user = await findUserById(payload.sub);
     if (!user) return res.status(401).json({ message: 'User not found.' });
 
