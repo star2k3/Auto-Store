@@ -19,7 +19,7 @@ export const requireAuth = async (req, res, next) => {
 
     const payload = jwt.verify(token, JWT_SECRET);
     const user = await findUserById(payload.sub);
-    if (!user) return res.status(401).json({ message: 'Authentication required.' });
+    if (!user) return res.status(401).json({ message: 'User not found.' });
 
     req.user = { id: String(user._id), role: user.role, name: user.name, email: user.email, address: user.address ?? '' };
     return next();
@@ -35,7 +35,7 @@ export const optionalAuth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, JWT_SECRET);
     const user = await findUserById(payload.sub);
-    if (!user) return res.status(401).json({ message: 'Authentication required.' });
+    if (!user) return res.status(401).json({ message: 'User not found.' });
 
     req.user = { id: String(user._id), role: user.role, name: user.name, email: user.email, address: user.address ?? '' };
     return next();

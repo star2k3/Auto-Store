@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import { Car } from './models/Car.js';
 import { Order } from './models/Order.js';
 import { User } from './models/User.js';
@@ -29,6 +30,12 @@ const buildFilter = ({ search = '', company = '', category = '', minPrice, maxPr
   }
 
   return { search, company, category, minPrice, maxPrice };
+};
+
+const ensureValidObjectId = (value) => {
+  if (!mongoose.isValidObjectId(value)) {
+    throw new mongoose.Error.CastError('ObjectId', value, 'id');
+  }
 };
 
 export const seedMongoCars = async () => {
@@ -73,12 +80,18 @@ export const listCars = async (query) => {
 };
 
 export const findCarById = async (id) => {
-  if (isMongoEnabled()) return Car.findById(id).lean();
+  if (isMongoEnabled()) {
+    ensureValidObjectId(id);
+    return Car.findById(id).lean();
+  }
   return inMemoryDb.cars.find((car) => car._id === id) ?? null;
 };
 
 export const findCarsByIds = async (ids) => {
-  if (isMongoEnabled()) return Car.find({ _id: { $in: ids } }).lean();
+  if (isMongoEnabled()) {
+    ids.forEach((id) => ensureValidObjectId(id));
+    return Car.find({ _id: { $in: ids } }).lean();
+  }
   return inMemoryDb.cars.filter((car) => ids.includes(car._id));
 };
 
@@ -121,6 +134,7 @@ export const updateCar = async (id, payload) => {
   const normalized = normalizeCarPayload(payload);
 
   if (isMongoEnabled()) {
+    ensureValidObjectId(id);
     const car = await Car.findByIdAndUpdate(id, normalized, { new: true, runValidators: true }).lean();
     return car;
   }
@@ -133,6 +147,7 @@ export const updateCar = async (id, payload) => {
 
 export const deleteCar = async (id) => {
   if (isMongoEnabled()) {
+    ensureValidObjectId(id);
     const result = await Car.deleteOne({ _id: id });
     return result.deletedCount > 0;
   }

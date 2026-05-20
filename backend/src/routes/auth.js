@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createUser, findUserByEmail, verifyUserPassword } from '../store.js';
 import { signToken } from '../middleware/auth.js';
+import { authLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
@@ -12,7 +13,7 @@ const toPublicUser = (user) => ({
   address: user.address ?? ''
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', authLimiter, async (req, res, next) => {
   try {
     const { name, email, password, address = '' } = req.body ?? {};
     const normalizedEmail = email?.trim().toLowerCase();
@@ -38,7 +39,7 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', authLimiter, async (req, res, next) => {
   try {
     const { email, password } = req.body ?? {};
     const normalizedEmail = email?.trim().toLowerCase();

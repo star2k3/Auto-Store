@@ -14,6 +14,7 @@ export function ProfilePage() {
     newPassword: ''
   });
   const [status, setStatus] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export function ProfilePage() {
     event.preventDefault();
     setLoading(true);
     setStatus('');
+    setIsSuccess(false);
 
     try {
       const payload = {
@@ -46,9 +48,11 @@ export function ProfilePage() {
       const response = await api.put('/users/me', payload);
       dispatch(updateProfile(response.data));
       setStatus('Profile updated successfully.');
+      setIsSuccess(true);
       setForm((current) => ({ ...current, currentPassword: '', newPassword: '' }));
     } catch (error) {
       setStatus(error.response?.data?.message || 'Unable to update profile.');
+      setIsSuccess(false);
     } finally {
       setLoading(false);
     }
@@ -91,7 +95,7 @@ export function ProfilePage() {
         />
         <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save changes'}</button>
       </form>
-      {status && <p className={`status ${status.includes('successfully') ? '' : 'error'}`}>{status}</p>}
+      {status && <p className={`status ${isSuccess ? '' : 'error'}`}>{status}</p>}
     </section>
   );
 }

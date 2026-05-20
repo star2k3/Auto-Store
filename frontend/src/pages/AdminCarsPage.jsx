@@ -7,6 +7,7 @@ export function AdminCarsPage() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
+  const [pendingDelete, setPendingDelete] = useState('');
 
   const loadCars = () => {
     setLoading(true);
@@ -23,9 +24,9 @@ export function AdminCarsPage() {
   }, []);
 
   const removeCar = async (id) => {
-    if (!confirm('Remove this car from the catalog?')) return;
     try {
       await api.delete(`/products/${id}`);
+      setPendingDelete('');
       loadCars();
     } catch (error) {
       setStatus(error.response?.data?.message || 'Unable to delete car.');
@@ -63,8 +64,17 @@ export function AdminCarsPage() {
                 <td>{formatPkr(car.pricePkr)}</td>
                 <td>{car.stock}</td>
                 <td className="row-actions">
-                  <Link to={`/admin/cars/${car._id}`} className="primary-link">Edit</Link>
-                  <button type="button" className="link-button" onClick={() => removeCar(car._id)}>Delete</button>
+                  {pendingDelete === car._id ? (
+                    <>
+                      <button type="button" className="link-button" onClick={() => removeCar(car._id)}>Confirm</button>
+                      <button type="button" className="link-button" onClick={() => setPendingDelete('')}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to={`/admin/cars/${car._id}`} className="primary-link">Edit</Link>
+                      <button type="button" className="link-button" onClick={() => setPendingDelete(car._id)}>Delete</button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}

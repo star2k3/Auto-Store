@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { Router } from 'express';
 import { findUserByEmail, findUserById, updateUser, verifyUserPassword } from '../store.js';
 import { requireAuth } from '../middleware/auth.js';
+import { accountLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
@@ -13,7 +14,7 @@ const toPublicUser = (user) => ({
   address: user.address ?? ''
 });
 
-router.get('/me', requireAuth, async (req, res, next) => {
+router.get('/me', accountLimiter, requireAuth, async (req, res, next) => {
   try {
     const user = await findUserById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
@@ -23,7 +24,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
   }
 });
 
-router.put('/me', requireAuth, async (req, res, next) => {
+router.put('/me', accountLimiter, requireAuth, async (req, res, next) => {
   try {
     const { name, email, address, currentPassword, newPassword } = req.body ?? {};
 

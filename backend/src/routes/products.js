@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createCar, deleteCar, findCarById, listCars, updateCar } from '../store.js';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
+import { adminLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
@@ -71,7 +72,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
+router.post('/', adminLimiter, requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const errorMessage = validateCarPayload(req.body ?? {});
     if (errorMessage) return res.status(400).json({ message: errorMessage });
@@ -83,7 +84,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res, next) => {
   }
 });
 
-router.put('/:id', requireAuth, requireAdmin, async (req, res, next) => {
+router.put('/:id', adminLimiter, requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const errorMessage = validateCarPayload(req.body ?? {});
     if (errorMessage) return res.status(400).json({ message: errorMessage });
@@ -96,7 +97,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res, next) => {
   }
 });
 
-router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
+router.delete('/:id', adminLimiter, requireAuth, requireAdmin, async (req, res, next) => {
   try {
     const removed = await deleteCar(req.params.id);
     if (!removed) return res.status(404).json({ message: 'Car not found' });

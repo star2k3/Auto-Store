@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { createOrderAndReduceStock } from '../store.js';
 import { optionalAuth } from '../middleware/auth.js';
+import { checkoutLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
-router.post('/', optionalAuth, async (req, res, next) => {
+router.post('/', checkoutLimiter, optionalAuth, async (req, res, next) => {
   try {
     const { customer, items } = req.body ?? {};
     const resolvedCustomer = customer ?? (req.user ? {
