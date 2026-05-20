@@ -46,12 +46,12 @@ export const optionalAuth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, resolvedSecret);
     const user = await findUserById(payload.sub);
-    if (!user) return res.status(401).json({ message: 'User not found.' });
+    if (!user) return next();
 
     req.user = { id: String(user._id), role: user.role, name: user.name, email: user.email, address: user.address ?? '' };
     return next();
   } catch {
-    return res.status(401).json({ message: 'Invalid or expired token.' });
+    return next();
   }
 };
 

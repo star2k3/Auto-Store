@@ -1,17 +1,9 @@
 import { Router } from 'express';
-import { createCar, deleteCar, findCarById, listCars, updateCar } from '../store.js';
+import { createCar, deleteCar, findCarById, listCars, parseColors, updateCar } from '../store.js';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 import { adminLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
-
-const parseColors = (value) => {
-  if (Array.isArray(value)) return value;
-  if (typeof value === 'string') {
-    return value.split(',').map((color) => color.trim()).filter(Boolean);
-  }
-  return [];
-};
 
 const validateCarPayload = (payload) => {
   const requiredFields = [
@@ -35,14 +27,20 @@ const validateCarPayload = (payload) => {
     return `Missing fields: ${missing.join(', ')}.`;
   }
 
-  const numericFields = ['pricePkr', 'year', 'stock', 'horsepower', 'topSpeedKph'];
-  for (const field of numericFields) {
-    const value = Number(payload[field]);
+  const numericValues = {
+    pricePkr: Number(payload.pricePkr),
+    year: Number(payload.year),
+    stock: Number(payload.stock),
+    horsepower: Number(payload.horsepower),
+    topSpeedKph: Number(payload.topSpeedKph)
+  };
+
+  for (const [field, value] of Object.entries(numericValues)) {
     if (Number.isNaN(value)) return `Invalid numeric value for ${field}.`;
   }
 
-  if (Number(payload.pricePkr) < 1) return 'Price must be greater than zero.';
-  if (Number(payload.stock) < 0) return 'Stock cannot be negative.';
+  if (numericValues.pricePkr < 1) return 'Price must be greater than zero.';
+  if (numericValues.stock < 0) return 'Stock cannot be negative.';
 
   const colors = parseColors(payload.colors);
   if (colors.length === 0) return 'At least one color is required.';

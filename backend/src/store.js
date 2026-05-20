@@ -100,8 +100,33 @@ export const findCarsByIds = async (ids) => {
   return inMemoryDb.cars.filter((car) => ids.includes(car._id));
 };
 
+export const parseColors = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    return value.split(',').map((color) => color.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 const normalizeCarPayload = (payload) => {
-  const normalized = { ...payload };
+  const normalized = {
+    productCode: payload.productCode,
+    company: payload.company,
+    model: payload.model,
+    name: payload.name,
+    category: payload.category,
+    pricePkr: payload.pricePkr,
+    year: payload.year,
+    stock: payload.stock,
+    imageUrl: payload.imageUrl,
+    summary: payload.summary,
+    fuelType: payload.fuelType,
+    transmission: payload.transmission,
+    horsepower: payload.horsepower,
+    topSpeedKph: payload.topSpeedKph,
+    colors: parseColors(payload.colors)
+  };
+
   const numericFields = ['pricePkr', 'year', 'stock', 'horsepower', 'topSpeedKph'];
 
   numericFields.forEach((field) => {
@@ -109,10 +134,6 @@ const normalizeCarPayload = (payload) => {
       normalized[field] = Number(normalized[field]);
     }
   });
-
-  if (typeof normalized.colors === 'string') {
-    normalized.colors = normalized.colors.split(',').map((color) => color.trim()).filter(Boolean);
-  }
 
   if (!normalized.name && normalized.company && normalized.model) {
     normalized.name = `${normalized.company} ${normalized.model}`;

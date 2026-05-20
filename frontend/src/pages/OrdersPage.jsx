@@ -49,8 +49,8 @@ export function OrdersPage() {
             <p>Total: <strong>{formatPkr(order.totalPkr)}</strong></p>
             <p>Items: {order.items.reduce((sum, item) => sum + item.quantity, 0)}</p>
             <ul>
-              {order.items.map((item) => (
-                <li key={`${order._id || order.orderId}-${String(item.carId)}`}>
+              {order.items.map((item, index) => (
+                <li key={`${order._id || order.orderId}-${String(item.carId || index)}`}>
                   {item.name} × {item.quantity}
                 </li>
               ))}

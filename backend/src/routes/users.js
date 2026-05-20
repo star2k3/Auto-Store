@@ -34,8 +34,9 @@ router.put('/me', accountLimiter, requireAuth, async (req, res, next) => {
     if (address !== undefined) updates.address = address;
 
     const normalizedEmail = email?.trim().toLowerCase();
+    const currentEmail = req.user.email?.trim().toLowerCase();
 
-    if (normalizedEmail && normalizedEmail !== req.user.email) {
+    if (normalizedEmail && normalizedEmail !== currentEmail) {
       const existing = await findUserByEmail(normalizedEmail);
       if (existing && String(existing._id) !== req.user.id) {
         return res.status(409).json({ message: 'Email is already registered.' });
