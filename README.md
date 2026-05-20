@@ -5,6 +5,8 @@ Mini MERN-style 3D car e-commerce project with:
 - **Backend**: Node.js + Express + MongoDB (uses in-memory MongoDB automatically if `MONGODB_URI` is not provided)
 - **Frontend**: React 19 + React Router + Redux Toolkit
 - **Catalog**: 100 cars from 10 companies with PKR pricing and detail specs
+- **Accounts**: Email/password auth, profile editing, order history
+- **Admin**: Catalog CRUD with role-protected routes
 
 ## Run locally
 
@@ -17,6 +19,10 @@ npm start
 ```
 
 API runs at `http://localhost:4000`.
+
+> **Default admin (in-memory mode only)**  
+> Email: `admin@autostore.com`  
+> Password: `Admin123!`
 
 ### 2) Frontend
 

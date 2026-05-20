@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { clearCart } from '../features/cart/cartSlice.js';
 import { api } from '../api.js';
 import { formatPkr } from '../utils/format.js';
@@ -7,10 +8,16 @@ import { formatPkr } from '../utils/format.js';
 export function CheckoutPage() {
   const dispatch = useDispatch();
   const items = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
   const total = items.reduce((sum, item) => sum + item.pricePkr * item.quantity, 0);
   const [form, setForm] = useState({ name: '', email: '', address: '' });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    setForm({ name: user.name || '', email: user.email || '', address: user.address || '' });
+  }, [user]);
 
   const submitCheckout = async (event) => {
     event.preventDefault();
@@ -42,6 +49,11 @@ export function CheckoutPage() {
     <section>
       <h2>Checkout</h2>
       <p>Total payable: <strong>{formatPkr(total)}</strong></p>
+      {!user && (
+        <p className="helper-text">
+          Have an account? <Link to="/login">Sign in</Link> to save this order to your history.
+        </p>
+      )}
       <form onSubmit={submitCheckout} className="checkout-form">
         <input
           placeholder="Name"
