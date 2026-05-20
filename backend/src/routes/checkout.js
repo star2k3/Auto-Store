@@ -1,13 +1,20 @@
 import { Router } from 'express';
 import { createOrderAndReduceStock } from '../store.js';
+import { optionalAuth } from '../middleware/auth.js';
+import { checkoutLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkoutLimiter, optionalAuth, async (req, res, next) => {
   try {
     const { customer, items } = req.body ?? {};
+    const resolvedCustomer = customer ?? (req.user ? {
+      name: req.user.name,
+      email: req.user.email,
+      address: req.user.address
+    } : null);
 
-    if (!customer?.name || !customer?.email || !customer?.address) {
+    if (!resolvedCustomer?.name || !resolvedCustomer?.email || !resolvedCustomer?.address) {
       return res.status(400).json({ message: 'Customer name, email and address are required.' });
     }
 
@@ -15,7 +22,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ message: 'At least one cart item is required.' });
     }
 
-    const summary = await createOrderAndReduceStock({ customer, items });
+    const summary = await createOrderAndReduceStock({ customer: resolvedCustomer, items, userId: req.user?.id });
     return res.status(201).json({
       ...summary,
       message: 'Checkout successful. Your booking has been received.'

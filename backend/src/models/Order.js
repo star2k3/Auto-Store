@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema(
       email: { type: String, required: true },
       address: { type: String, required: true }
     },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     items: { type: [orderItemSchema], validate: (items) => items.length > 0 },
     totalPkr: { type: Number, required: true, min: 1 }
   },

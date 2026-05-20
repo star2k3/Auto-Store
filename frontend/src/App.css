@@ -47,6 +47,84 @@ nav a.active {
   color: #8be9fd;
 }
 
+.link-button {
+  background: transparent;
+  border: none;
+  color: #8be9fd;
+  padding: 0;
+  font: inherit;
+}
+
+.panel {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 720px;
+}
+
+.panel--wide {
+  max-width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-grid--wide {
+  max-width: 900px;
+}
+
+.helper-text {
+  margin-top: 0.75rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.orders-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.order-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+}
+
 .hero {
   padding: 1rem;
   border-radius: 16px;
