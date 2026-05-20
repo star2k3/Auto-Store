@@ -34,6 +34,9 @@ export const carsSeed = companies.flatMap((brand, brandIndex) =>
     const year = 2020 + (modelIndex % 6);
     const pricePkr = brand.basePrice + modelIndex * 425000 + (brandIndex % 3) * 150000;
 
+    // Create a precise search query for the specific car to feed into the image engine
+    const searchQuery = encodeURIComponent(`${brand.company} ${model} car exterior`);
+
     return {
       productCode: `${brand.company.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}-${String(modelIndex + 1).padStart(2, '0')}`,
       company: brand.company,
@@ -42,7 +45,10 @@ export const carsSeed = companies.flatMap((brand, brandIndex) =>
       pricePkr,
       year,
       stock: 5 + ((brandIndex + modelIndex) % 16),
-      imageUrl: `https://source.unsplash.com/featured/1200x800/?${encodeURIComponent(`${brand.company} ${model} car`)}`,
+      
+      // FIXED: Using Bing's Image Search thumbnail endpoint to dynamically pull real car photos
+      imageUrl: `https://tse2.mm.bing.net/th?q=${searchQuery}&w=1200&h=800&c=7&rs=1&p=0`,
+      
       summary: `${model} by ${brand.company} offers premium road comfort, city agility, and reliable performance for Pakistan roads.`,
       fuelType: spec.fuelType,
       transmission: spec.transmission,
