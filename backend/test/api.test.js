@@ -10,8 +10,8 @@ describe('Auto-Store API', () => {
     await connectDatabase();
   });
 
-  beforeEach(() => {
-    resetInMemoryDatabase();
+  beforeEach(async () => {
+    await resetInMemoryDatabase();
   });
 
   afterAll(async () => {

@@ -20,6 +20,8 @@ const defaultForm = {
   colors: ''
 };
 
+const minYear = new Date().getFullYear() - 50;
+
 export function AdminCarFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -139,7 +141,7 @@ export function AdminCarFormPage() {
         <input
           placeholder="Year"
           type="number"
-          min="1990"
+          min={minYear}
           value={form.year}
           onChange={(event) => setForm((current) => ({ ...current, year: event.target.value }))}
           required

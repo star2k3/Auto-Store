@@ -20,9 +20,9 @@ npm start
 
 API runs at `http://localhost:4000`.
 
-> **Default admin (in-memory mode only)**  
-> Email: `admin@autostore.com`  
-> Password: `Admin123!`
+> **Admin seed (in-memory mode)**  
+> Set `ADMIN_PASSWORD` to control the seeded admin password (email: `admin@autostore.com`).  
+> If not set in development, a random password is generated and logged on startup.
 
 ### 2) Frontend
 

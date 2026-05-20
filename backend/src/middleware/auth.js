@@ -1,7 +1,8 @@
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { findUserById } from '../store.js';
 
-const FALLBACK_SECRET = 'dev-secret-change-me';
+const FALLBACK_SECRET = crypto.randomBytes(32).toString('hex');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
@@ -9,7 +10,7 @@ if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
 }
 
 if (!JWT_SECRET) {
-  console.warn('JWT_SECRET is not set. Using a development-only fallback secret.');
+  console.warn('JWT_SECRET is not set. Using an ephemeral development-only secret.');
 }
 
 const extractToken = (req) => {

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { Car } from './models/Car.js';
 import { Order } from './models/Order.js';
 import { User } from './models/User.js';
+import { resolveAdminPassword } from './adminSeed.js';
 import { carsSeed } from './data/carsSeed.js';
 import { inMemoryDb, isMongoEnabled } from './db.js';
 
@@ -53,7 +54,7 @@ export const seedMongoUsers = async () => {
   if (!isMongoEnabled()) return;
   const count = await User.countDocuments();
   if (count > 0) return;
-  const passwordHash = await bcrypt.hash('Admin123!', 10);
+  const passwordHash = await bcrypt.hash(resolveAdminPassword(), 10);
   await User.create({
     name: 'Auto-Store Admin',
     email: 'admin@autostore.com',
